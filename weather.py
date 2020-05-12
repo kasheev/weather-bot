@@ -2,6 +2,7 @@ import vk_api
 from vk_api.longpoll import VkLongPoll
 import pyowm
 import math
+import json
 
 own = pyowm.OWM('3b4aa439966c6a305dd471efd3cabb9f', language= 'ru')
 
@@ -12,15 +13,6 @@ class Weather:
         vk_session = vk_api.VkApi(token=token)
         self.longpoll = VkLongPoll(vk_session)
         self.vk = vk_session.get_api()
-
-    def send_main_msg(self, number, event):
-        self.vk.messages.send(
-            user_id=event.user_id,
-            message=(
-                ""
-            ),
-            random_id=number
-        )
 
     def get_longpoll(self):
         return self.longpoll
@@ -48,10 +40,16 @@ class Weather:
         AT = int(temperature + 0.348 * e - 0.7 * wind - 4.25) + 1
         return AT
 
-    def what_to_wear(self,effective_temp,status):
+    def what_to_wear(self,segment,status):
         status = status.lower()
-        if status == 'ясно':
-            return 'надеть штаны'
+        with open("weather.json", "r", encoding='utf-8') as read_file:  # считываем данные из файла
+            data = json.load(read_file)
+            try:
+                string = data['погода'][status]
+                return string
+            except KeyError:
+                string = data['температура'][str(segment)]
+                return string
 
     def info_weather_city(self, number, event, request):
         observation = own.weather_at_place(str(request))
@@ -59,14 +57,15 @@ class Weather:
         temperature = weather.get_temperature('celsius')['temp']
         status = weather.get_detailed_status()
         effective_temp = self.effective_temperature(temperature,weather)
-        advice = self.what_to_wear(effective_temp,status)
+        segment = math.ceil(effective_temp/10)
+        advice = self.what_to_wear(segment,status)
         self.vk.messages.send(
             user_id=event.user_id,
             message=(
                     'Город ' + request.title() + '\n'
                     'Температура ' + str(int(temperature)) + ' С°\n'
                     'Ощущается как ' + str(effective_temp) + ' С°\n'
-                    'Погода ' + status.title() + ' \n'
+                    'Погода ' + status + ' \n'
                     'Cоветую тебе ' + str(advice) + ' \n'
             ),
             random_id = number
