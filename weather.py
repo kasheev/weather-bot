@@ -48,6 +48,11 @@ class Weather:
         AT = int(temperature + 0.348 * e - 0.7 * wind - 4.25) + 1
         return AT
 
+    def what_to_wear(self,effective_temp,status):
+        status = status.lower()
+        if status == 'ясно':
+            return 'надеть штаны'
+
     def info_weather_city(self, number, event, request):
         observation = own.weather_at_place(str(request))
         weather = observation.get_weather()
@@ -62,6 +67,7 @@ class Weather:
                     'Температура ' + str(int(temperature)) + ' С°\n'
                     'Ощущается как ' + str(effective_temp) + ' С°\n'
                     'Погода ' + status.title() + ' \n'
+                    'Cоветую тебе ' + str(advice) + ' \n'
             ),
             random_id = number
         )
