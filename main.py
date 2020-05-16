@@ -21,7 +21,8 @@ def send_messages():
                 if c_box:
                     weather_bot.info_weather_city(number, event, request)
                 else:
-                    weather_bot.answer(event,number)
+                    weather_bot.answer(event, number)
+
 
 def main():
     send_messages()
