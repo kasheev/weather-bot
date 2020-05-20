@@ -3,8 +3,8 @@ from vk_api.longpoll import VkLongPoll
 import pyowm
 import math
 import json
-
-own = pyowm.OWM('3b4aa439966c6a305dd471efd3cabb9f', language='ru')
+owm_api = open("owm.txt","r")
+own = pyowm.OWM(owm_api.read(), language='ru')
 
 
 class Weather:
@@ -17,7 +17,7 @@ class Weather:
 
     def get_longpoll(self):
       """получаю лонгпулл"""
-        return self.longpoll
+      return self.longpoll
 
     def check_city(self, request):
         """функиця для проверки города"""

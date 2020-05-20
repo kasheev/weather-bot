@@ -3,8 +3,8 @@ from vk_api.longpoll import VkEventType
 import random
 import weather
 
-token = '8e394514295399d4cd6d3175dac80d4268ed1065d6bc68d74d3b73b5e5ee3b98d9c7fead5fb88354b11c5'
-weather_bot = weather.Weather(token)
+token = open('token.txt','r')
+weather_bot = weather.Weather(token.read())
 
 
 def send_messages():
